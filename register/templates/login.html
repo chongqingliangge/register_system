@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .div1{
+            margin: 0 auto;
+        }
+        .form1{
+            border: 0 solid black;
+            width: 250px;
+            height: 250px;
+            background: lightblue;
+            text-align: center;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+<div class="div1">
+
+<form method="post" class="form1">
+    {% for message in get_flashed_messages() %}
+    <h2>欢迎来到亮哥登陆系统</h2>
+    {{ form.csrf_token }}
+{{ form.user_name.label }}{{ form.user_name }}<br>
+{{ form.password1.label }}{{ form.password1 }}<br>
+{{ form.submit }}
+     &nbsp&nbsp&nbsp<a href="/regist" style="text-decoration: none">注册>>></a><br>
+        {{ message }}!!
+    </form>
+
+
+    {% endfor %}
+
+    </div>
+</body>
+</html>

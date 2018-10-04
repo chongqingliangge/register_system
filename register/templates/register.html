@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .form1{
+            border: 0 solid black;
+            width: 300px;
+            height: 250px;
+            background: lightcyan;
+            text-align: center;
+            margin: 0 auto;
+            line-height: 30px;
+        }
+    </style>
+</head>
+<body>
+<form method="post" class="form1">
+
+    {{ form.csrf_token }}
+    <h3>亮哥注册系统</h3>
+
+    {{ form.user_name.label }}{{ form.user_name }}<br>
+    {{ form.password1.label }}{{ form.password1 }}<br>
+    {{ form.password2.label }}{{ form.password2 }}<br>
+    {{ form.tel.label }}{{ form.tel }}<br>
+    {{ form.addr.label }}{{ form.addr }}<br>
+    {{ form.submit }}<br>
+    {% for message in get_flashed_messages() %}
+    {{ message }}
+    {% endfor %}
+</form>
+</body>
+</html>
