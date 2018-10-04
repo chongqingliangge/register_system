@@ -1,9 +1,9 @@
-from flask import Flask, request, render_template,flash
+from flask import Flask, request, render_template,flash,session,redirect,url_for
 from flask_script import Manager
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, IntegerField
-from wtforms.validators import DataRequired, EqualTo
+from wtforms.validators import DataRequired, EqualTo,Length
 
 app = Flask(__name__)
 
@@ -27,17 +27,17 @@ class User(db.Model):
     __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True)
     user_name = db.Column(db.String(64), unique=True)
-    tel = db.Column(db.Integer, nullable=False)
+    tel = db.Column(db.BIGINT, nullable=False)
     password = db.Column(db.Integer, nullable=False)
     address = db.Column(db.String(128), nullable=False)
 
 
 class Register(FlaskForm):
-    user_name = StringField('用户名:', validators=[DataRequired()])
-    password1 = PasswordField('密码:', validators=[DataRequired()])
-    password2 = PasswordField('重复密码:', validators=[DataRequired(), EqualTo('password1')])
-    tel = IntegerField('电话号码:', validators=[DataRequired()])
-    addr = StringField('家庭住址:', validators=[DataRequired()])
+    user_name = StringField('用户名:', validators=[DataRequired(message='用户名不能为空')])
+    password1 = PasswordField('密码:', validators=[DataRequired(message='密码不能为空')])
+    password2 = PasswordField('重复密码:', validators=[DataRequired('密码不正确'), EqualTo('password1',message='两次密码不一样')])
+    tel = IntegerField('电话号码:', validators=[DataRequired(message='电话号码格式不对')])
+    addr = StringField('家庭住址:', validators=[DataRequired(message='住址不能为空')])
     submit = SubmitField('注册')
 
 
@@ -50,6 +50,7 @@ class Login(FlaskForm):
 @app.route('/', methods=['GET', 'POST'])
 def login():
     myform = Login()
+    print(session['csrf_token'])
     try:
         if myform.validate_on_submit():
             # print(1)
@@ -89,12 +90,18 @@ def regist():
                 password1 = myform.password1.data
                 tel1 = myform.tel.data
                 address1 = myform.addr.data
+                # print(2)
                 user = User(user_name=name, password=password1, tel=tel1, address=address1)
+
                 db.session.add(user)
                 db.session.commit()
-                return '注册成功'
-    except:
-        print('操作有误')
+
+                # flash( '注册成功')
+                return redirect(url_for('login'))
+            else:
+                print('验证没通过')
+    except Exception as e:
+        print('操作有误%s'%e)
         flash('注册失败')
     return render_template('register.html', form=myform)
 
